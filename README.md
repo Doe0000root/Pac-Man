@@ -1,6 +1,8 @@
 This game was created on C#.
 
-Basic AI of ghost(bot) is using an A* algorythm for chasing a player.
+Basic AI of the ghost(bot) is using an A* algorythm for chasing a player.
+
+Based on your activity an AI can be harder or easier, so BE CAREFUL with the bot.
 
 You can choose a level of difficulty on your own.
 
