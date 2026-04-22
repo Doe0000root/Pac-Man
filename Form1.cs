@@ -1,6 +1,10 @@
 namespace pac_man;
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 
@@ -15,6 +19,9 @@ public partial class Form1 : Form {
     private Point ghostPos = new Point(8, 8);
     private Point pacmanDir = new Point(0, 0); 
     private int score = 0;
+
+    private bool announcment = false;
+
     
     private int ghostDifficulty = 1; 
     private int tickCounter = 0;
@@ -130,6 +137,7 @@ public partial class Form1 : Form {
             Application.Restart(); 
         }
 
+        GameOverPoint();
         this.Invalidate(); 
     }
 
@@ -148,13 +156,47 @@ public partial class Form1 : Form {
             case Keys.D: pacmanDir = new Point(1, 0);  break;
         }
     }
+    private int GetTopScore()
+    {
+        var topScore = Database.GetTopScores();
+        if (topScore.Count > 0) {
+            return topScore[0].Score;
+        }
+        
+        return 0; 
+    }
 
+    private void GameOverPoint()
+    {
+        int currentTopScore = GetTopScore();
+
+        if(score >= currentTopScore && !announcment)
+        {
+            gameTimer.Stop();
+
+            MessageBox.Show($"You have got the new top score in the leaderboards, {playerName}!\nScore: {score}");
+
+            announcment = true;
+
+            gameTimer.Start();
+
+        }
+    }
+
+
+    private void Additional_Abilities()
+    {
+        /////
+    }
+
+    
     private void HandleGameOver() {
         gameTimer.Stop();
         Database.AddScore(playerName, score); 
         MessageBox.Show($"Game Over, {playerName}!\nScore: {score}");
         Application.Restart();
     }
+
 
     protected override void OnPaint(PaintEventArgs e) {
         if (currentState != GameState.Playing) return;
